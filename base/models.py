@@ -14,6 +14,7 @@ class Books(models.Model):
     topic = models.ForeignKey(Topic, on_delete=models.SET_NULL, null=True)
     title = models.CharField(max_length=200)
     series = models.CharField(max_length=200, null=True, blank=True)
+    available = models.BooleanField(default=True)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 

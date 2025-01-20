@@ -1,12 +1,16 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse       
-from .models import Books
+from django.shortcuts import get_object_or_404, render, redirect
+from django.http import HttpResponse, HttpResponseNotAllowed       
+from .models import Books, Topic
 from .forms import BookForm
+from django.contrib import messages
 
 
 def home(request):
     books = Books.objects.all()
-    context = {"books":books}
+
+    topics = Topic.objects.all()
+
+    context = {"books":books, "topics":topics}
     return render(request, "base/home.html", context)
 
 def book(request, pk):
@@ -25,6 +29,20 @@ def addBook(request):
 
     context = {'form': form}
     return render(request, 'base/book_form.html', context)
+
+def borrowBook(request, pk):
+    book = get_object_or_404(Books, id=pk)
+
+    if request.method == 'POST':
+        if book.available:
+            book.available = False
+            book.save()
+            messages.success(request, 'You have successfully borrowed the book.')
+        else:
+            messages.error(request, 'Book is not available for borrowing.')
+            return render(request, 'base/borrow_book.html', {'obj': book})
+        
+    return render(request, 'base/borrow_book.html', {'obj': book})
 
 
 def updateBook(request, pk):

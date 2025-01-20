@@ -4,4 +4,4 @@ from .models import Books
 class BookForm(ModelForm):
     class Meta:
         model = Books
-        fields = "__all__"
+        fields = ("topic","title","series")
