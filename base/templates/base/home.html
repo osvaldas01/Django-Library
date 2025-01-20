@@ -1,0 +1,38 @@
+{% extends "main.html" %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% block content %}
+    <h1>Home Template</h1>
+
+    <div>
+        <a href="{% url 'add-book' %}">Add Book</a>
+        <div>
+            {% for book in books %}
+                <div>
+                    <a href="{% url 'update-book' book.id %}" method="POST">Edit</a>
+                    <a href="{% url 'delete-book' pk=book.id %}" method="POST">Delete</a>
+
+                    <span>@{{book.user.username}}</span>
+                    <h5>
+                        {{book.id}} -- <a href="{% url 'book' book.id %}">{{book.title}}</a>
+                    </h5>
+                    <small>{{book.topic.name}}</small>
+                    <hr>
+                </div>
+            
+            {% endfor %}
+        </div>
+    </div>
+
+
+
+    {% endblock content %}
+</body>
+</html>
