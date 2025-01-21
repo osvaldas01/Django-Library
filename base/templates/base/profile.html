@@ -1,0 +1,86 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-header">
+        <h1>Profile: @{{user.username}}</h1>
+    </div>
+
+    <!-- Borrowed Books Section -->
+    <div class="borrowed-books-section">
+        <h2>My Borrowed Books</h2>
+        {% if user.borrowed_books.all %}
+            <div class="books-grid">
+                {% for book in user.borrowed_books.all %}
+                <div class="book-card">
+                    <div class="book-cover">
+                        <img src="{{ book.get_image_url }}" alt="{{ book.title }}">
+                    </div>
+                    <div class="book-info">
+                        <h5 class="book-title">
+                            <a href="{% url 'book' book.id %}">{{book.title}}</a>
+                        </h5>
+                        <p class="book-author">by {{book.author}}</p>
+                        <small class="book-topic">{{book.topic.name}}</small>
+                        
+                        <div class="book-actions">
+                            <a href="{% url 'read-book' book.id %}" class="btn btn-primary btn-sm">Read Book</a>
+                            <a href="{% url 'return-book' book.id %}" class="btn btn-return btn-sm">Return Book</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="no-books-message">You haven't borrowed any books yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- User's Added Books Section -->
+    <div class="added-books-section">
+        <h2>Books Added by Me</h2>
+        {% if user.books_set.all %}
+            <div class="books-grid">
+                {% for book in user.books_set.all %}
+                <div class="book-card">
+                    <div class="book-cover">
+                        <img src="{{ book.get_image_url }}" alt="{{ book.title }}">
+                    </div>
+                    <div class="book-info">
+                        <h5 class="book-title">
+                            <a href="{% url 'book' book.id %}">{{book.title}}</a>
+                        </h5>
+                        <p class="book-author">by {{book.author}}</p>
+                        <small class="book-topic">{{book.topic.name}}</small>
+                        
+                        <div class="book-actions">
+                            <a href="{% url 'update-book' book.id %}" class="btn btn-edit btn-sm">Edit</a>
+                            <a href="{% url 'delete-book' book.id %}" class="btn btn-delete btn-sm">Delete</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="no-books-message">You haven't added any books yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- Activity Section -->
+    <div class="activity-section">
+        <h2>Recent Activity</h2>
+        {% if activities %}
+            <div class="activity-list">
+                {% for activity in activities %}
+                <div class="activity-item">
+                    <span class="activity-time">{{activity.created|timesince}} ago</span>
+                    <span class="activity-description">{{ activity.get_emoji }} {{activity.description}}</span>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="no-activity-message">No recent activity.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

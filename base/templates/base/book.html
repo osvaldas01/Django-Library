@@ -9,39 +9,79 @@
 </head>
 <body>
     {% block content %}
-    <h1>Home Template</h1>
-
-    <div>
-        <div>
-            <h1>{{book.title}}</h1>
-            <p>{{book.series}}</p>
-        </div>
-    </div>
-
-    <div class="comment-wrapper">
-        <h3>Conversation</h3>
-        <hr>
-
-        {% for message in bookMessages %}
-
-            <div>
-                <small>{{message.user}}  {{message.created|timesince}} ago</small>
-                <p>{{message.body}}</p>
-                <hr>
+    <div class="book-detail-container">
+        <div class="book-header">
+            <h1 class="book-title">{{book.title}}</h1>
+            {% if book.series %}
+            <p class="book-series">Series: {{book.series}}</p>
+            {% endif %}
+            
+            <div class="book-actions">
+                {% if request.user == book.user or request.user.is_superuser %}
+                    <a href="{% url 'update-book' book.id %}" class="btn btn-edit">Edit</a>
+                    <a href="{% url 'delete-book' book.id %}" class="btn btn-delete">Delete</a>
+                {% endif %}
+                
+                {% if request.user.is_authenticated %}
+                    {% if book.available %}
+                        <a href="{% url 'borrow-book' book.id %}" class="btn btn-primary">Borrow Book</a>
+                    {% elif request.user == book.borrowed_by %}
+                        <a href="{% url 'return-book' book.id %}" class="btn btn-return">Return Book</a>
+                        <a href="{% url 'read-book' book.id %}" class="btn btn-primary">Read Book</a>
+                    {% endif %}
+                {% endif %}
             </div>
 
-        {% endfor %}
-    </div>
+            {% if book.pdf_file or book.content %}
+                {% if request.user.is_authenticated %}
+                    <a href="{% url 'read-book' book.id %}" class="btn btn-primary">Read Book</a>
+                {% endif %}
+            {% else %}
+                {% if request.user.is_superuser %}
+                    <p class="no-content-warning">No content available. Add content or PDF to make this book readable.</p>
+                {% endif %}
+            {% endif %}
+        </div>
 
-{% if request.user.is_authenticated %}
-    <div class="comment-fomr">
-        <form action="" method="POST">
-            {% csrf_token %}
-            <input type="text" name="body" placeholder="Write your message here...">
-        </form>
-    </div>
-{% endif %}
+        <div class="book-meta">
+            <div class="meta-item">
+                <strong>Author:</strong> {{book.author}}
+            </div>
+            <div class="meta-item">
+                <strong>Added by:</strong> {{book.user.username}}
+            </div>
+            <div class="meta-item">
+                <strong>Category:</strong> {{book.topic.name}}
+            </div>
+        </div>
 
+        <div class="comments-section">
+            <h3>Discussion</h3>
+            <div class="comments-list">
+                {% for message in bookMessages %}
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">{{message.user}}</span>
+                        <span class="comment-time">{{message.created|timesince}} ago</span>
+                    </div>
+                    <p class="comment-body">{{message.body}}</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if request.user.is_authenticated %}
+            <div class="comment-form">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <input type="text" name="body" placeholder="Write your message here..." class="comment-input">
+                        <button type="submit" class="btn btn-primary">Send</button>
+                    </div>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
     {% endblock content %}
 </body>
 </html>

@@ -23,4 +23,4 @@ media/
 *.env
 
 # Ignore settings.py
-settings.py
+Library/settings.py

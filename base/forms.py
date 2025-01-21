@@ -1,7 +1,11 @@
-from django.forms import ModelForm
+from django import forms
 from .models import Books
 
-class BookForm(ModelForm):
+class BookForm(forms.ModelForm):
     class Meta:
         model = Books
-        fields = ("topic","title","series")
+        fields = ['title', 'topic', 'author', 'description', 'image', 'pdf_file', 'content']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 4}),
+            'content': forms.Textarea(attrs={'rows': 10, 'placeholder': 'Enter book content here (if not uploading PDF)'}),
+        }

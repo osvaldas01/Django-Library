@@ -1,0 +1,95 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<div class="reader-container">
+    <div class="reader-header">
+        <h2>{{ book.title }}</h2>
+        {% if not book.pdf_file and not book.content %}
+            {% if request.user.is_superuser %}
+            <div class="admin-controls">
+                <a href="{% url 'update-book' book.id %}" class="btn btn-primary">Add Book Content</a>
+            </div>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <div class="book-content" id="book-content">
+        {% if book.pdf_file %}
+            <div class="pdf-viewer">
+                <embed src="{{ book.pdf_file.url }}" type="application/pdf" width="100%" height="800px">
+                <p>If the PDF is not loading, <a href="{{ book.pdf_file.url }}" target="_blank">click here to download</a>.</p>
+            </div>
+        {% elif book.content %}
+            <div class="text-content">
+                <div class="reader-controls">
+                    <button id="decrease-font" class="btn btn-control">A-</button>
+                    <button id="increase-font" class="btn btn-control">A+</button>
+                    <select id="theme-selector" class="theme-select">
+                        <option value="light">Light Mode</option>
+                        <option value="sepia">Sepia Mode</option>
+                        <option value="dark">Dark Mode</option>
+                    </select>
+                </div>
+                <div class="content-text">
+                    {{ book.content|linebreaks }}
+                </div>
+            </div>
+        {% else %}
+            <div class="no-content">
+                <p>This book's content is not yet available.</p>
+                {% if request.user.is_superuser %}
+                    <p>As an admin, you can add content by editing the book.</p>
+                {% else %}
+                    <p>Please contact an administrator to add the book content.</p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const content = document.getElementById('book-content');
+    const decreaseBtn = document.getElementById('decrease-font');
+    const increaseBtn = document.getElementById('increase-font');
+    const themeSelector = document.getElementById('theme-selector');
+    
+    let fontSize = parseInt(localStorage.getItem('reader-font-size')) || 16;
+    let theme = localStorage.getItem('reader-theme') || 'light';
+    
+    // Initialize settings
+    content.style.fontSize = fontSize + 'px';
+    themeSelector.value = theme;
+    applyTheme(theme);
+    
+    // Font size controls
+    decreaseBtn.addEventListener('click', () => {
+        if (fontSize > 12) {
+            fontSize -= 2;
+            content.style.fontSize = fontSize + 'px';
+            localStorage.setItem('reader-font-size', fontSize);
+        }
+    });
+    
+    increaseBtn.addEventListener('click', () => {
+        if (fontSize < 24) {
+            fontSize += 2;
+            content.style.fontSize = fontSize + 'px';
+            localStorage.setItem('reader-font-size', fontSize);
+        }
+    });
+    
+    // Theme controls
+    themeSelector.addEventListener('change', (e) => {
+        const selectedTheme = e.target.value;
+        applyTheme(selectedTheme);
+        localStorage.setItem('reader-theme', selectedTheme);
+    });
+    
+    function applyTheme(theme) {
+        const content = document.getElementById('book-content');
+        content.className = 'book-content theme-' + theme;
+    }
+});
+</script>
+{% endblock %} 

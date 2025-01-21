@@ -1,13 +1,17 @@
 {% extends 'main.html' %}
 
 {% block content %}
-
-<form action="" method="POST">
-    {% csrf_token %}
-    <p>Are you sure you want to borrow this book? {{obj}}</p>
-    <a href="{% url 'home' %}">Go Back</a>
-    <button type="submit">Borrow Book</button>
-</form>
-
-
+<div class="borrow-confirmation">
+    <div class="confirmation-card">
+        <h2>Borrow Book</h2>
+        <p>Are you sure you want to borrow "{{obj}}"?</p>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="button-group">
+                <a href="{% url 'home' %}" class="btn btn-outline">Cancel</a>
+                <button type="submit" class="btn btn-primary">Borrow Book</button>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock content %}

@@ -1,0 +1,62 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<div class="scrape-container">
+    <h1>Import Books</h1>
+    
+    <div class="search-section">
+        <form method="GET" class="search-form">
+            <input type="text" name="query" placeholder="Search for books..." value="{{ query }}">
+            <input type="number" name="limit" min="1" max="20" value="{{ limit }}" class="book-limit">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+    </div>
+
+    {% if books %}
+    <div class="search-results">
+        <h2>Search Results ({{ books|length }} books found)</h2>
+        <form method="POST" class="bulk-import-form">
+            {% csrf_token %}
+            <div class="bulk-actions">
+                <button type="submit" name="bulk_import" class="btn btn-primary">Import Selected Books</button>
+                <div class="select-all-wrapper">
+                    <input type="checkbox" id="select-all" onchange="toggleAllBooks(this)">
+                    <label for="select-all">Select All</label>
+                </div>
+            </div>
+
+            <div class="books-grid">
+                {% for book in books %}
+                <div class="scrape-book-card">
+                    <div class="book-selection">
+                        <input type="checkbox" name="selected_books" value="{{ book.title }}" class="book-checkbox">
+                    </div>
+                    <div class="book-cover">
+                        {% if book.image_url %}
+                            <img src="{{ book.image_url }}" alt="{{ book.title }}">
+                        {% else %}
+                            <div class="no-image">No Image Available</div>
+                        {% endif %}
+                    </div>
+                    <div class="book-info">
+                        <h3>{{ book.title }}</h3>
+                        <p class="author">by {{ book.author }}</p>
+                        <p class="topic">Topic: {{ book.topic.name }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </form>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function toggleAllBooks(checkbox) {
+    const bookCheckboxes = document.querySelectorAll('.book-checkbox');
+    bookCheckboxes.forEach(box => {
+        box.checked = checkbox.checked;
+    });
+}
+</script>
+{% endblock %}

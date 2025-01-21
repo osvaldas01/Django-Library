@@ -1,71 +1,38 @@
-{% extends "main.html" %}
+{% extends 'main.html' %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'base/style.css' %}">
-</head>
-
-
-<body>
-    {% block content %}
-
-    <style>
-        .home-container{
-        display: grid;
-        grid-template-columns: 1fr 3fr;
-    }
-    </style>
-
-    <h1>Home Template</h1>
-
-    <div class="home-container">
-        <div>
-            <h3>Browse Topics</h3>
-            <hr>
-
-            <div>
-                <a href="{% url 'home' %}">All</a>
-            </div>
-            {% for topic in topics %}
-            <div>
-                <a href="{% url 'home' %}?q={{topic.name}}">{{topic}}</a>
-            </div>
-            {% endfor %}
-
-        </div>
-
-
-        <div>
-            <h5>{{books_count}} books available</h5>
-            <a href="{% url 'add-book' %}">Add Book</a>
-            <hr>
-            {% for book in books %}
-                <div>
-                    {% if request.user == book.user %}
-                    <a href="{% url 'borrow-book' pk=book.id %}" method="POST">Borrow</a>
-                    <a href="{% url 'update-book' book.id %}" method="POST">Edit</a>
-                    <a href="{% url 'delete-book' pk=book.id %}" method="POST">Delete</a>
-                    {% endif %}
-
-                    <span>@{{book.user.username}}</span>
-                    <h5>
-                        {{book.id}} -- <a href="{% url 'book' book.id %}">{{book.title}}</a>
-                    </h5>
-                    <small>{{book.topic.name}}</small>
-                    <hr>
-                </div>
-            
-            {% endfor %}
-        </div>
+{% block content %}
+<div class="home-container">
+    <!-- Search Section -->
+    <div class="search-section">
+        <form method="GET" action="{% url 'home' %}">
+            <input type="text" name="q" placeholder="Search for books..." value="{{ request.GET.q }}">
+            <button type="submit">Search</button>
+        </form>
     </div>
 
+    <!-- Topics Section -->
 
-
-    {% endblock content %}
-</body>
-</html>
+    <!-- Books Grid -->
+    <div class="books-grid">
+        {% for book in books %}
+        <div class="book-card">
+            <div class="book-cover">
+                <img src="{{ book.get_image_url }}" alt="{{ book.title }}">
+            </div>
+            <div class="book-info">
+                <h3><a href="{% url 'book' book.id %}">{{book.title}}</a></h3>
+                <p class="author">by {{book.author}}</p>
+                <p class="topic">{{book.topic.name}}</p>
+                {% if book.available %}
+                    <span class="status available">Available</span>
+                {% else %}
+                    <span class="status borrowed">Borrowed by {{book.borrowed_by.username}}</span>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <p class="no-books">No books found.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

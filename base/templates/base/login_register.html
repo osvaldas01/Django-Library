@@ -1,36 +1,54 @@
 {% extends 'main.html' %}
 
 {% block content %}
+<div class="auth-container">
+    {% if page == 'login' %}
+    <div class="auth-card">
+        <h2 class="auth-title">Login</h2>
+        <form method="POST" class="auth-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" name="username" id="username" placeholder="Enter Username" required>
+            </div>
 
-{% if page == 'login' %}
-<div>
-    <form action="", method="POST">
-        {% csrf_token %}
-        <label for="">Username:</label>
-        <input type="text", name="username", placeholder="Enter Username">
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" placeholder="Enter Password" required>
+            </div>
 
-        <label for="">Password:</label>
-        <input type="password", name="password", placeholder="Enter Password">
+            <button type="submit" class="btn btn-primary btn-block">Login</button>
+        </form>
+        <div class="auth-footer">
+            <p>Haven't signed up yet?</p>
+            <a href="{% url 'register' %}" class="btn btn-outline btn-block">Sign Up</a>
+        </div>
+    </div>
 
-        <input type="submit", value="Login">
-    </form>
-    <p> Havent signed up yet?</p>
-    <a href="{% url 'register' %}">Sign Up</a>
+    {% else %}
 
+    <div class="auth-card">
+        <h2 class="auth-title">Register</h2>
+        <form method="POST" class="auth-form">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                <div class="field-errors">
+                    {{ field.errors }}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary btn-block">Register</button>
+        </form>
+        <div class="auth-footer">
+            <p>Already have an account?</p>
+            <a href="{% url 'login' %}" class="btn btn-outline btn-block">Login</a>
+        </div>
+    </div>
+    {% endif %}
 </div>
-
-{% else %}
-
-<div>
-    <form action="", method="POST">
-        {% csrf_token %}
-        {{form.as_p}}
-
-        <input type="submit", value="Register">
-    </form>
-    <p> Already signed up?</p>
-    <a href="{% url 'login' %}">Login</a></div>
-
-{% endif %}
-
 {% endblock content %}

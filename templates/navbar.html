@@ -1,18 +1,36 @@
-<a href="/">
-    <h1>LOGO</h1>
-</a>
+<nav class="navbar">
+    <div class="container">
+        <a href="/" class="navbar-brand">
+            <h1>LIBRARY</h1>
+        </a>
 
-<form action="{% url 'home' %}" method="GET">
-    <input type="text" name="q" placeholder="Search Books...">
-</form>
+        <div class="search-bar">
+            <form action="{% url 'home' %}" method="GET">
+                <input type="text" name="q" placeholder="Search Books...">
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
 
-{% if request.user.is_authenticated %}
-<p>Hello {{request.user}}</p>
-<a href="{% url 'logout' %}">Logout</a>
-
-{% else %}
-
-<a href="{% url 'login' %}">Login</a>
-{% endif %}
+        <div class="navbar-nav">
+            {% if request.user.is_authenticated %}
+                <div class="user-menu">
+                    <span class="welcome-text">Hello, {{request.user}}</span>
+                    <a href="{% url 'profile' %}" class="nav-link">My Profile</a>
+                    <a href="{% url 'logout' %}" class="nav-link">Logout</a>
+                </div>
+            {% else %}
+                <div class="auth-buttons">
+                    <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+                    <a href="{% url 'register' %}" class="btn btn-outline">Register</a>
+                </div>
+            {% endif %}
+            {% if request.user.is_superuser %}
+                <a href="{% url 'scrape-books' %}" class="nav-link">Import Books</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
 
 <hr>
