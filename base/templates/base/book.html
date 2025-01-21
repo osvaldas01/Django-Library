@@ -14,10 +14,33 @@
     <div>
         <div>
             <h1>{{book.title}}</h1>
+            <p>{{book.series}}</p>
         </div>
     </div>
 
+    <div class="comment-wrapper">
+        <h3>Conversation</h3>
+        <hr>
 
+        {% for message in bookMessages %}
+
+            <div>
+                <small>{{message.user}}  {{message.created|timesince}} ago</small>
+                <p>{{message.body}}</p>
+                <hr>
+            </div>
+
+        {% endfor %}
+    </div>
+
+{% if request.user.is_authenticated %}
+    <div class="comment-fomr">
+        <form action="" method="POST">
+            {% csrf_token %}
+            <input type="text" name="body" placeholder="Write your message here...">
+        </form>
+    </div>
+{% endif %}
 
     {% endblock content %}
 </body>
