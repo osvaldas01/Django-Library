@@ -1,5 +1,8 @@
 # Digital Library
 
+![Image Title](photos/photo.png)
+
+
 ## Overview
 Digital Library is a web application that allows users to discover, borrow, and read a collection of digital books. The application provides features for searching books, filtering by topics, and managing user activities.
 

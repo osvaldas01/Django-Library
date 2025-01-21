@@ -276,8 +276,11 @@ def scrapeBooks(request):
                     if image_url.startswith('http:'):
                         image_url = 'https:' + image_url[5:]
                     
-                    # Simplified topic handling
-                    topic, _ = Topic.objects.get_or_create(name="Other")
+                    # Get categories from Google Books API
+                    categories = volume_info.get('categories', [])
+                    # Use the first category or default to "Other"
+                    topic_name = categories[0] if categories else "Other"
+                    topic, _ = Topic.objects.get_or_create(name=topic_name)
                     
                     description = volume_info.get('description', 'No description available.')
                     content = description

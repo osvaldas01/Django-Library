@@ -11,6 +11,15 @@
     </div>
 
     <!-- Topics Section -->
+    <div class="topics-section">
+        <a href="{% url 'home' %}" class="topic-link {% if not request.GET.topic %}active{% endif %}">All</a>
+        {% for topic in topics %}
+            <a href="{% url 'home' %}?topic={{topic.name}}" 
+               class="topic-link {% if request.GET.topic == topic.name %}active{% endif %}">
+                {{topic.name}}
+            </a>
+        {% endfor %}
+    </div>
 
     <!-- Books Grid -->
     <div class="books-grid">

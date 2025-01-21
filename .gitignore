@@ -22,3 +22,7 @@ media/
 # Ignore sensitive files
 *.env
 
+# Ignore settings.py
+Library/settings.py
+
+photos/
